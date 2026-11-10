@@ -1,11 +1,693 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" data-theme="default" data-mood="dark" data-animations="true" data-details="true">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cloudy | كلاودي</title>
 </head>
 <body>
-    
+
+    <!-- ==================== HEADER ==================== -->
+    <header id="app-header">
+        <h1 id="app-title" data-en="Cloudy" data-ar="كلاودي">Cloudy</h1>
+
+        <nav id="header-nav" aria-label="Application controls">
+            <menu id="header-actions">
+                <!-- Clear Button -->
+                <li>
+                    <button type="button" id="clear-btn" aria-haspopup="dialog" aria-controls="clear-warning-card">
+                        <span class="icon" aria-hidden="true">↻</span>
+                        <span class="btn-text" data-en="Clear" data-ar="مسح">Clear</span>
+                    </button>
+                </li>
+
+                <!-- Theme Button -->
+                <li>
+                    <button type="button" id="theme-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="themes-card">
+                        <span class="icon" aria-hidden="true">🎨</span>
+                        <span class="btn-text" data-en="Theme" data-ar="المظهر">Theme</span>
+                    </button>
+                </li>
+
+                <!-- Language Toggle Button (Fades page out & in) -->
+                <li>
+                    <button type="button" id="language-btn" data-current-lang="en" data-target-lang="ar">
+                        <abbr class="icon" lang="ar" data-en="أب" data-ar="EN" aria-hidden="true">أب</abbr>
+                        <span class="btn-text" data-en="To Arabic" data-ar="إلى الإنجليزية">To Arabic</span>
+                    </button>
+                </li>
+            </menu>
+        </nav>
+
+        <!-- Clear Confirmation Warning Card -->
+        <dialog id="clear-warning-card" role="alertdialog" aria-labelledby="clear-warning-message">
+            <form method="dialog">
+                <p id="clear-warning-message" data-en="Are you sure you want to clear the setup? You should export the schedule before doing this. (Bookmarks won't be cleared)" data-ar="متأكد تبي تمسح أعدادات الفلاتر؟ يفضل تصدر جدولك قبل. (الجداول المحفوظة في المفضلة مب بتتأثر)">Are you sure you want to clear the setup? You should export the schedule before doing this. (Bookmarks won't be cleared)</p>
+                <menu class="dialog-actions">
+                    <li>
+                        <button type="submit" id="clear-confirm-yes" value="yes" data-en="Yes" data-ar="أي">Yes</button>
+                    </li>
+                    <li>
+                        <button type="submit" id="clear-confirm-no" value="no" autofocus data-en="No" data-ar="لا">No</button>
+                    </li>
+                </menu>
+            </form>
+        </dialog>
+
+        <!-- Themes Card -->
+        <dialog id="themes-card" aria-label="Theme and display settings">
+            <menu id="theme-quick-toggles" aria-label="Visual toggles">
+                <li>
+                    <button type="button" id="toggle-animations-btn" aria-pressed="true" title="Animations">
+                        <span class="icon" aria-hidden="true">✵</span>
+                        <span class="btn-text">Animations</span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" id="toggle-details-btn" aria-pressed="true" title="Details">
+                        <span class="icon" aria-hidden="true">☰</span>
+                        <span class="btn-text">Details</span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" id="toggle-mood-btn" aria-pressed="false" title="Mood">
+                        <span class="icon" aria-hidden="true">☀</span>
+                        <span class="btn-text">Mood</span>
+                    </button>
+                </li>
+            </menu>
+
+            <section aria-labelledby="themes-list-heading">
+                <h2 id="themes-list-heading" data-en="Themes List" data-ar="قائمة المظاهر">Themes List</h2>
+                <ul id="themes-list" role="listbox" aria-labelledby="themes-list-heading">
+                    <li role="option" aria-selected="true" data-theme-id="wireframe">
+                        <button type="button" data-en="Wireframe" data-ar="حدود">Wireframe</button>
+                    </li>
+                    <li role="option" aria-selected="false" data-theme-id="cloudy">
+                        <button type="button" data-en="Cloudy" data-ar="غائم">Cloudy</button>
+                    </li>
+                    </li>
+                </ul>
+            </section>
+        </dialog>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main id="app-main" data-layout="horizontal">
+
+        <!-- ==================== SIDE PANEL ==================== -->
+        <aside id="side-panel" aria-label="Schedule configuration panel" data-snap="normal" data-collapsed="false" data-en="Schedule configuration panel" data-ar="لوحة تخصيص الجدول">
+
+            <!-- Resize / Collapse Handle (Horizontal shrink/click collapse & Vertical 3-snap: Expanded, Normal, Minimized) -->
+            <button type="button" id="side-panel-handle" aria-label="Resize or toggle side panel" aria-controls="side-panel" aria-expanded="true" data-en="Resize or toggle side panel" data-ar="حجّم او بدل اللوحة الجانبية"></button>
+
+            <!-- Primary Side Panel Tabs -->
+            <nav id="side-panel-nav" aria-label="Side panel sections" data-en="Side panel sections" data-ar="أقسام اللوحة الجانبية">
+                <div role="tablist" aria-label="Side panel tabs">
+                    <button type="button" role="tab" id="tab-courses" aria-controls="panel-courses" aria-selected="true">
+                        <span class="icon" aria-hidden="true">品</span>
+                        <span class="tab-text">Courses</span>
+                    </button>
+                    <button type="button" role="tab" id="tab-preferences" aria-controls="panel-preferences" aria-selected="false">
+                        <span class="icon" aria-hidden="true">🎚</span>
+                        <span class="tab-text">Preferences</span>
+                    </button>
+                    <button type="button" role="tab" id="tab-schedules" aria-controls="panel-schedules" aria-selected="false">
+                        <span class="icon" aria-hidden="true">☰</span>
+                        <span class="tab-text">Schedules</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- ========== TAB 1: COURSES ========== -->
+            <section id="panel-courses" role="tabpanel" aria-labelledby="tab-courses">
+                <!-- Search and Filter Controls -->
+                <search id="courses-search-bar" aria-label="Search and filter courses" data-en="Search and filter courses" data-ar="أبحث وفلتر المقررات">
+                    <label for="fuzzy-search-input">
+                        <span class="icon" aria-hidden="true">🔍</span>
+                        <span class="sr-only">Fuzzy Search</span>
+                    </label>
+                    <input type="search" id="fuzzy-search-input" name="q" placeholder="Fuzzy Search" autocomplete="off">
+
+                    <button type="button" id="courses-filter-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="courses-filter-popover" title="Filter by Gender and College">
+                        <span class="icon" aria-hidden="true">▽</span>
+                        <span class="sr-only">Filter Courses</span>
+                    </button>
+
+                    <!-- Dataset Filter Popover (Gender -> College) -->
+                    <dialog id="courses-filter-popover" aria-label="Dataset filters">
+                        <fieldset>
+                            <legend>Gender</legend>
+                            <select id="filter-gender" name="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </fieldset>
+                        <fieldset>
+                            <legend>College</legend>
+                            <select id="filter-college" name="college">
+                                <option value="all">All Colleges</option>
+                            </select>
+                        </fieldset>
+                    </dialog>
+                </search>
+
+                <!-- No Available CRNs Warning Notice -->
+                <output id="no-available-crns-warning" role="alert" aria-live="assertive" hidden>
+                    <span class="icon" aria-hidden="true">!</span>
+                    <span data-en="There is no available CRNs here" data-ar="مافي أي مقررات متاحة هنا">There is no available CRNs here</span>
+                </output>
+
+                <!-- Courses Hierarchical List -->
+                <ul id="courses-tree" aria-label="Courses list">
+                    <li class="course-node" data-course-code="CS101">
+                        <details class="course-details" open>
+                            <summary class="course-summary">
+                                <input type="checkbox" class="select-all-crns-checkbox" aria-label="Select all available CRNs for this course" data-en="Select all available CRNs for this course" data-ar="حدد كل الCRNs المتاحة لهذا المقرر">
+                                <span class="expand-icon" aria-hidden="true">∨</span>
+                                <span class="course-heading">
+                                    <strong class="course-name" data-en="Course Name" data-ar="اسم المقرر">Course Name</strong>
+                                    <span aria-hidden="true">•</span>
+                                    <code class="course-code">Code</code>
+                                </span>
+                            </summary>
+
+                            <!-- CRNs List under One Course -->
+                            <ul class="crns-list" aria-label="Course CRN sections" data-en="Course CRN sections" data-ar="المقرر الCRN الشعب">
+                                <li class="crn-node" data-crn="12345" data-availability="available" data-type="theory">
+                                    <details class="crn-details" open>
+                                        <summary class="crn-summary">
+                                            <input type="checkbox" class="select-crn-checkbox" name="crn" value="12345" aria-label="Select CRN 12345" data-en="Select CRN 12345" data-ar="حدد الCRN 12345">
+                                            <span class="expand-icon" aria-hidden="true">∨</span>
+                                            <data class="crn-number" value="12345">CRN</data>
+                                            <mark class="crn-availability-badge" data-status="available" data-en="Availability" data-ar="الإتاحة">Availability</mark>
+                                        </summary>
+
+                                        <dl class="crn-meta">
+                                            <div class="crn-meta-row">
+                                                <dt class="sr-only" data-en="Instructor and Section" data-ar="الدكتور والشعبة">Instructor and Section</dt>
+                                                <dd>
+                                                    <span class="crn-instructor" data-en="Instructor" data-ar="الدكتور">Instructor</span>
+                                                    <span aria-hidden="true">•</span>
+                                                    <span class="crn-section" data-en="Section" data-ar="الشعبة">Section</span>
+                                                </dd>
+                                            </div>
+                                            <div class="crn-meta-row">
+                                                <dt class="sr-only" data-en="Class Type" data-ar="نوع الشعبة">Class Type</dt>
+                                                <dd class="crn-type" data-type="theory" data-en="Type" data-ar="النوع">Type</dd>
+                                            </div>
+                                            <div class="crn-meta-row">
+                                                <dt class="sr-only" data-en="Class Time" data-ar="وقت الشعبة">Class Time</dt>
+                                                <dd class="crn-time">
+                                                    <time datetime="08:00">08:00</time>
+                                                    <span aria-hidden="true">—</span>
+                                                    <time datetime="09:15">09:15</time>
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                    </details>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- ========== TAB 2: PREFERENCES ========== -->
+            <section id="panel-preferences" role="tabpanel" aria-labelledby="tab-preferences" hidden>
+                <!-- Secondary Sub-Tabs for Preferences -->
+                <nav id="preferences-subnav" aria-label="Preference categories" data-en="Preference categories" data-ar="أنواع التفضيلات">
+                    <div role="tablist" aria-label="Preferences sub-tabs" data-en="Preferences sub-tabs" data-ar="الألواح الفرعية للتفضيلات">
+                        <button type="button" role="tab" id="subtab-pref-courses" aria-controls="subpanel-pref-courses" aria-selected="true">
+                            <span class="icon" aria-hidden="true">品</span>
+                            <span class="tab-text" data-en="Courses" data-ar="المقررات">Courses</span>
+                        </button>
+                        <button type="button" role="tab" id="subtab-pref-instructors" aria-controls="subpanel-pref-instructors" aria-selected="false">
+                            <span class="icon" aria-hidden="true">👤</span>
+                            <span class="tab-text" data-en="Instructors" data-ar="الدكاترة">Instructors</span>
+                        </button>
+                        <button type="button" role="tab" id="subtab-pref-times" aria-controls="subpanel-pref-times" aria-selected="false">
+                            <span class="icon" aria-hidden="true">🕒</span>
+                            <span class="tab-text" data-en="Times" data-ar="الأوقات">Times</span>
+                        </button>
+                    </div>
+                </nav>
+
+                <!-- Sub-Panel 2A: Courses Preferences (Default: ones) -->
+                <section id="subpanel-pref-courses" role="tabpanel" aria-labelledby="subtab-pref-courses">
+                    <table id="pref-courses-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-en="Course Name" data-ar="إسم المقرر">Course Name</th>
+                                <th scope="col" data-en="Weights" data-ar="الأوزان">Weights</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pref-courses-list">
+                            <tr data-course-code="CS101">
+                                <th scope="row" class="pref-course-name" data-en="Course Name" data-ar="أسم المقرر">Course Name</th>
+                                <td>
+                                    <input type="number" name="course-weight" value="1" min="0" step="1" aria-label="Weight for Course Name"  data-en="Weight for Course Name" data-ar="الوزن للمقرر إسم مقرر">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Sub-Panel 2B: Instructors Preferences (Mode: None / Must Include / Must Exclude / Score, Default Score: zeros) -->
+                <section id="subpanel-pref-instructors" role="tabpanel" aria-labelledby="subtab-pref-instructors" hidden>
+                    <table id="pref-instructors-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-en="Instructor" data-ar="الدكتور">Instructor</th>
+                                <th scope="col" data-en="Mode" data-ar="الوضع">Mode</th>
+                                <th scope="col" data-en="Score" data-ar="التقييم">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pref-instructors-list">
+                            <tr data-instructor="Instructor">
+                                <th scope="row" class="pref-instructor-name" data-en="Instructor" data-ar="الدكتور">Instructor</th>
+                                <td>
+                                    <select name="instructor-mode" aria-label="Preference mode for Instructor" data-en="Preference mode for Instructor" data-ar="وضع التقييم للدكتور">
+                                        <option value="none" selected data-en="None" data-ar="حيادي">None</option>
+                                        <option value="must-include" data-en="Must Include" data-ar="لازم موجود">Must Include</option>
+                                        <option value="must-exclude" data-en="Must Exclude" data-ar="لازم مايكون موجود">Must Exclude</option>
+                                        <option value="score" data-en="Score" data-ar="تقييم">Score</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="instructor-score" value="0" step="1" aria-label="Score for Instructor" data-en="Score for Instructor" data-ar="تقييم الدكتور">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Sub-Panel 2C: Times Preferences (Mode: Must Include / Must Exclude / Score, Default Score: zeros) -->
+                <section id="subpanel-pref-times" role="tabpanel" aria-labelledby="subtab-pref-times" hidden>
+                    <table id="pref-times-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-ar="Time" data-en="الوقت">Time</th>
+                                <th scope="col" data-ar="Mode" data-en="الوضع">Mode</th>
+                                <th scope="col" data-ar="Score" data-en="التقييم">Score</th>
+                                <th scope="col">
+                                    <span class="sr-only" data-en="Remove" data-ar="إحذف">Remove</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="pref-times-list">
+                            <tr class="time-pref-row">
+                                <td>
+                                    <div class="time-interval-trigger" role="group" aria-label="Time interval" data-en="Time interval" data-ar="الفترة الزمنية">
+                                        <button type="button" class="time-slot-btn" data-bound="start" aria-haspopup="dialog" aria-controls="time-picker-popover">
+                                            <time datetime="08:00">08:00</time>
+                                        </button>
+                                        <span aria-hidden="true">—</span>
+                                        <button type="button" class="time-slot-btn" data-bound="end" aria-haspopup="dialog" aria-controls="time-picker-popover">
+                                            <time datetime="09:30">09:30</time>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <select name="time-mode" aria-label="Preference mode for time interval" data-en="Preference mode for time interval" data-ar="وضع التقييم للفترة">
+                                        <option value="must-include" data-en="Must Include" data-ar="لازم موجود">Must Include</option>
+                                        <option value="must-exclude" data-en="Must Exclude" data-ar="لازم مايكون موجود">Must Exclude</option>
+                                        <option value="score" data-en="Score" data-ar="تقييم">Score</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="time-score" value="0" step="1" aria-label="Score for time interval" data-en="Score for time interval" data-ar="تقييم الفترة">
+                                </td>
+                                <td>
+                                    <button type="button" class="remove-time-row-btn" aria-label="Remove time interval" title="Remove" data-en="Remove time interval" data-ar="إحذف الفترة">-</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">
+                                    <button type="button" id="add-time-row-btn" data-en="+ New" data-ar="+ ضيف">+ New</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- Popover Time Picker (Pops when Start/End clicked: e.g. 09 : 30 AM) -->
+                    <dialog id="time-picker-popover" aria-label="Time picker">
+                        <fieldset class="time-picker-selectors">
+                            <legend class="sr-only">Select Time</legend>
+                            <select id="time-picker-hour" name="hour" aria-label="Hour">
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09" selected>09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                            </select>
+                            <span aria-hidden="true">:</span>
+                            <select id="time-picker-minute" name="minute" aria-label="Minute">
+                                <option value="00">00</option>
+                                <option value="15">15</option>
+                                <option value="30" selected>30</option>
+                                <option value="45">45</option>
+                            </select>
+                            <select id="time-picker-period" name="period" aria-label="AM or PM">
+                                <option value="AM" selected>AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </fieldset>
+                    </dialog>
+                </section>
+            </section>
+
+            <!-- ========== TAB 3: SCHEDULES ========== -->
+            <section id="panel-schedules" role="tabpanel" aria-labelledby="tab-schedules" hidden>
+                <!-- Secondary Sub-Tabs for Schedules (All / Bookmarks) -->
+                <nav id="schedules-subnav" aria-label="Schedule filter tabs" data-en="Schedule filter tabs" data-ar="الجدول الفلتر الصفحات">
+                    <div role="tablist" aria-label="Schedules filter" data-en="Schedules filter" data-ar="فلتر الجداول">
+                        <button type="button" role="tab" id="subtab-schedules-all" aria-controls="schedules-list-region" aria-selected="true" data-filter="all">
+                            <span class="icon" aria-hidden="true">⊞</span>
+                            <span class="tab-text" data-en="All" data-ar="الكل">All</span>
+                        </button>
+                        <button type="button" role="tab" id="subtab-schedules-bookmarks" aria-controls="schedules-list-region" aria-selected="false" data-filter="bookmarks">
+                            <span class="icon" aria-hidden="true">🔖</span>
+                            <span class="tab-text" data-en="Bookmarks" data-ar="الصفحات">Bookmarks</span>
+                        </button>
+                    </div>
+                </nav>
+
+                <!-- Generated Schedules Table -->
+                <div id="schedules-list-region" role="region" aria-live="polite">
+                    <table id="schedules-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-en="Schedule #" data-ar="الجدول #">Schedule #</th>
+                                <th scope="col" data-en="Bookmark" data-ar="المفضلة">Bookmark</th>
+                                <th scope="col" data-en="Color" data-ar="اللون">Color</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedules-tbody">
+                            <tr class="schedule-row" data-schedule-id="1" data-bookmarked="true">
+                                <th scope="row">
+                                    <label class="schedule-select-label">
+                                        <input type="checkbox" name="active-schedule" value="1" checked>
+                                        <span data-en="Schedule 1" data-ar="الجدول 1">Schedule 1</span>
+                                    </label>
+                                </th>
+                                <td>
+                                    <button type="button" class="bookmark-schedule-btn" aria-pressed="true" aria-label="Bookmark Schedule 1" data-en="Bookmark Schedule 1" data-ar="احفظ الجدول 1">
+                                        <span class="icon" aria-hidden="true">🔖</span>
+                                    </button>
+                                </td>
+                                <td>
+                                    <input type="color" class="schedule-color-picker" name="schedule-color" value="#5b8def" aria-label="Color for Schedule 1 (Auto selection based on theme)" data-en="Color for Schedule 1 (Auto selection based on theme)" data-ar="اللون للجدول 1 (يحدد تلقائيًا بناءًا على المظهر)">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </aside>
+
+        <!-- ==================== PREVIEW PANEL ==================== -->
+        <section id="preview-panel" aria-label="Timetable Preview" data-en="Timetable Preview" data-ar="عرض جدول الأوقات">
+
+            <!-- Scrollable & Zoom-Expandable Timetable Container -->
+            <div id="timetable-scroll-container" data-transposed="false" data-zoom-level="1">
+                <table id="timetable-grid" aria-label="Weekly Schedule" data-en="Weekly Schedule" data-ar="الجدول الأسبوعي">
+                    <thead>
+                        <tr id="timetable-header-row">
+                            <!-- Top-Left Corner Cell with Transpose Button -->
+                            <th scope="col" id="transpose-corner-cell">
+                                <button type="button" id="transpose-btn" aria-pressed="false" aria-label="Transpose days and hours" title="Transpose">
+                                    <span class="icon" aria-hidden="true">⇄</span>
+                                </button>
+                            </th>
+
+                            <!-- Day Headers (Responsive: Sunday -> Sun. -> S / الأحد -> أحد -> أ) -->
+                            <th scope="col" class="day-header" data-day="sunday">
+                                <abbr title="Sunday" data-full-en="Sunday" data-short-en="Sun." data-narrow-en="S" data-full-ar="الأحد" data-short-ar="أحد" data-narrow-ar="أ">Sun.</abbr>
+                            </th>
+                            <th scope="col" class="day-header" data-day="monday">
+                                <abbr title="Monday" data-full-en="Monday" data-short-en="Mon." data-narrow-en="M" data-full-ar="الإثنين" data-short-ar="إثنين" data-narrow-ar="ن">Mon.</abbr>
+                            </th>
+                            <th scope="col" class="day-header" data-day="tuesday">
+                                <abbr title="Tuesday" data-full-en="Tuesday" data-short-en="Tue." data-narrow-en="T" data-full-ar="الثلاثاء" data-short-ar="ثلاثاء" data-narrow-ar="ث">Tue.</abbr>
+                            </th>
+                            <th scope="col" class="day-header" data-day="wednesday">
+                                <abbr title="Wednesday" data-full-en="Wednesday" data-short-en="Wed." data-narrow-en="W" data-full-ar="الأربعاء" data-short-ar="أربعاء" data-narrow-ar="ر">Wed.</abbr>
+                            </th>
+                            <th scope="col" class="day-header" data-day="thursday">
+                                <abbr title="Thursday" data-full-en="Thursday" data-short-en="Thu." data-narrow-en="R" data-full-ar="الخميس" data-short-ar="خميس" data-narrow-ar="خ">Thu.</abbr>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <!-- Time Slots Body (Default 7AM - 10AM+, Extends when needed 7AM - 6PM, Expandable subdivisions through zoom) -->
+                    <tbody id="timetable-body">
+                        <tr class="time-row" data-hour="07">
+                            <th scope="row" class="time-header">
+                                <time datetime="07:00">7</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="07:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="07:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="07:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="07:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="07:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="08">
+                            <th scope="row" class="time-header">
+                                <time datetime="08:00">8</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="08:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="08:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="08:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="08:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="08:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="09">
+                            <th scope="row" class="time-header">
+                                <time datetime="09:00">9</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="09:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="09:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="09:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="09:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="09:00">
+                                <!-- Sample Course Card inside a Day Slot -->
+                                <article class="course-card" data-schedule-id="1" data-course-code="CS101" data-crn="12345" data-schedule-color="auto" data-course-color="auto" tabindex="0">
+                                    <header class="course-card-header">
+                                        <h3 class="course-card-title" title="Course">Course</h3>
+                                        <span class="course-card-badge" data-type="lab">LAB</span>
+                                    </header>
+                                    <p class="course-card-code-crn">
+                                        <code class="course-card-code">Code</code>
+                                        <span aria-hidden="true">-</span>
+                                        <data class="course-card-crn" value="12345">CRN</data>
+                                    </p>
+                                    <p class="course-card-instructor-section">
+                                        <span class="course-card-instructor">Instructor</span>
+                                        <span aria-hidden="true">-</span>
+                                        <span class="course-card-section">Section</span>
+                                    </p>
+                                    <footer class="course-card-time">
+                                        <time datetime="09:00">xx:xx</time>
+                                        <span aria-hidden="true">—</span>
+                                        <time datetime="10:00">xx:xx</time>
+                                    </footer>
+                                </article>
+                            </td>
+                        </tr>
+                        <tr class="time-row" data-hour="10">
+                            <th scope="row" class="time-header">
+                                <time datetime="10:00">10</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="10:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="10:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="10:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="10:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="10:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="11">
+                            <th scope="row" class="time-header">
+                                <time datetime="11:00">11</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="11:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="11:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="11:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="11:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="11:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="12">
+                            <th scope="row" class="time-header">
+                                <time datetime="12:00">12 PM</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="12:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="12:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="12:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="12:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="12:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="13">
+                            <th scope="row" class="time-header">
+                                <time datetime="13:00">1</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="13:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="13:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="13:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="13:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="13:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="14">
+                            <th scope="row" class="time-header">
+                                <time datetime="14:00">2</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="14:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="14:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="14:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="14:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="14:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="15">
+                            <th scope="row" class="time-header">
+                                <time datetime="15:00">3</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="15:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="15:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="15:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="15:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="15:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="16">
+                            <th scope="row" class="time-header">
+                                <time datetime="16:00">4</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="16:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="16:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="16:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="16:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="16:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="17">
+                            <th scope="row" class="time-header">
+                                <time datetime="17:00">5</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="17:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="17:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="17:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="17:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="17:00"></td>
+                        </tr>
+                        <tr class="time-row" data-hour="18">
+                            <th scope="row" class="time-header">
+                                <time datetime="18:00">6</time>
+                            </th>
+                            <td class="schedule-cell" data-day="sunday" data-time="18:00"></td>
+                            <td class="schedule-cell" data-day="monday" data-time="18:00"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-time="18:00"></td>
+                            <td class="schedule-cell" data-day="wednesday" data-time="18:00"></td>
+                            <td class="schedule-cell" data-day="thursday" data-time="18:00"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Export Dock -->
+            <aside id="export-dock" aria-label="Export and schedule actions" data-en="Export and schedule actions" data-ar="خيارات التصدير والجداول">
+                <menu id="export-dock-menu">
+                    <!-- Schedules CRNs Modal Trigger -->
+                    <li>
+                        <button type="button" id="schedules-crns-btn" aria-haspopup="dialog" aria-controls="schedules-crns-card" title="Schedules CRNs" data-en="Schedules CRNs" data-ar="الCRNs للجداول">
+                            <span class="icon" aria-hidden="true">¡</span>
+                            <span class="sr-only">Schedules CRNs</span>
+                        </button>
+                    </li>
+
+                    <!-- Save as .png Image -->
+                    <li>
+                        <button type="button" id="save-png-btn" title="Save as .png Image" data-en="Save as .png Image" data-ar="إحفظ كصورة .png">
+                            <span class="icon" aria-hidden="true">🖼</span>
+                            <span class="sr-only">Save as .png Image</span>
+                        </button>
+                    </li>
+
+                    <!-- Save as .ics for calendars -->
+                    <li>
+                        <button type="button" id="save-ics-btn" title="Save as .ics for calendars" data-en="Save as .ics for calendars" data-ar="إحفظ ك.ics للجداول">
+                            <span class="icon" aria-hidden="true">📅</span>
+                            <span class="sr-only">Save as .ics for calendars</span>
+                        </button>
+                    </li>
+
+                    <!-- Print or Save Page as .pdf -->
+                    <li>
+                        <button type="button" id="print-pdf-btn" title="Print or Save Page as .pdf" data-en="Print or Save Page as .pdf" data-ar="إطبع او إحفظ الصفحة كملف .pdf">
+                            <span class="icon" aria-hidden="true">🖨</span>
+                            <span class="sr-only">Print or Save Page as .pdf</span>
+                        </button>
+                    </li>
+                </menu>
+            </aside>
+
+            <!-- Schedules CRNs Popup Card (Click CRN to Copy -> ✓ Copied!) -->
+            <dialog id="schedules-crns-card" aria-labelledby="crns-card-schedule-title">
+                <header id="crns-card-header">
+                    <button type="button" id="crns-prev-schedule-btn" aria-label="Previous schedule" data-en="Previous schedule" data-ar="الجدول السابق" >&lt;</button>
+                    <h2 id="crns-card-schedule-title">Schedule 1</h2>
+                    <button type="button" id="crns-next-schedule-btn" aria-label="Next schedule" data-en="Next schedule" data-ar="الجدول التالي">&gt;</button>
+                </header>
+
+                <ul id="crns-card-list" aria-label="Courses and CRNs in current schedule" data-en="Courses and CRNs in current schedule" data-ar="المقررات والCRNs للجدول الحالي">
+                    <li class="crns-card-item">
+                        <span class="crns-card-course" data-en="Course :" data-ar="المقرر: ">Course :</span>
+                        <button type="button" class="copy-crn-btn" data-crn="12345" title="Click to Copy" data-en="Click to Copy" data-ar="أنقر للنسخ">
+                            <data value="12345">CRN</data>
+                        </button>
+                    </li>
+                </ul>
+
+                <output id="crn-copy-toast" role="status" aria-live="polite" hidden data-en="✓ Copied!" data-ar="✓ تم النسخ!">✓ Copied!</output>
+            </dialog>
+
+        </section>
+
+    </main>
+
+    <!-- ==================== GLOBAL UI TOUCHES (TOOLTIP & WARNINGS) ==================== -->
+    <!-- Reusable Hover Tooltip -->
+    <aside id="hover-tooltip" role="tooltip" hidden>
+        <p id="hover-tooltip-content">Tooltip / content</p>
+    </aside>
+
+    <!-- Schedule Confliction Warning Toast / Alert -->
+    <aside id="confliction-warning-card" role="alert" aria-live="assertive" hidden>
+        <span class="icon" aria-hidden="true">⚠</span>
+        <strong data-en="Warning" data-ar="تحذير">Warning</strong>
+        <p data-en="Filters are conflicting, resulting in zero valid schedules! Lease the filters." data-ar="الفلاتر تتعارض، مافي أي جدول صالح لذي الأعدادات! خفف الفلاتر.">Filters are conflicting, resulting in zero valid schedules! Lease the filters.</p>
+    </aside>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer id="app-footer">
+        <p id="footer-info">
+            <span id="footer-credits" data-en="By Hassan" data-ar="من حسن">By Hassan</span>
+            <span aria-hidden="true">•</span>
+            <small id="footer-notes" data-en="For bachelor students of King Faisal University" data-ar="لطلبة البكالوريوس في جامعة الملك فيصل">For bachelor students of King Faisal University</small>
+            <span aria-hidden="true">•</span>
+            <small id="footer-disclaimer" data-en="Check codes before registration" data-ar="تأكد من الرموز (الأكواد) قبل التسجيل">Check codes before registration</small>
+        </p>
+
+        <a id="footer-repo-link" href="https://github.com/hsnya/Cloudy-Scheduler" target="_blank" rel="noopener noreferrer" aria-label="GitHub Link" data-en="Link" data-ar="رابط">
+            <span class="icon" aria-hidden="true">🐱</span>
+            <span class="sr-only">GitHub</span>
+        </a>
+    </footer>
+
 </body>
 </html>

@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Footer Layout & 4-Interval Segmented Responsiveness
+   1: Single line (all 5 segments)
+   2: Break notes & disclaimer to 2 even lines; keep credits & dots centered
+   3: Hide credits (+ adjacent dot)
+   4: Hide notes (+ adjacent dot); keep disclaimer & repo button always visible
+   ========================================================================== */
+
+#app-footer {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    container-type: inline-size;
+    container-name: footer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid GrayText;
+}
+
+#footer-info {
+    margin: 0;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#footer-credits,
+#footer-notes,
+#footer-disclaimer,
+#footer-info > [aria-hidden="true"] {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* Interval 2 & 3: Balanced 2-line wrapping on notes and disclaimer */
+#footer-info[data-footer-stage="2"] #footer-notes,
+#footer-info[data-footer-stage="3"] #footer-notes {
+    flex: 0 1 auto;
+    white-space: normal;
+    text-wrap: balance;
+    width: var(--footer-notes-2line-w, auto);
+    max-width: 100%;
+}
+
+#footer-info[data-footer-stage="2"] #footer-disclaimer,
+#footer-info[data-footer-stage="3"] #footer-disclaimer {
+    flex: 0 1 auto;
+    white-space: normal;
+    text-wrap: balance;
+    width: var(--footer-disclaimer-2line-w, auto);
+    max-width: 100%;
+}
+
+/* Interval 3: Hide credits and its adjacent separator dot */
+#footer-info[data-footer-stage="3"] #footer-credits,
+#footer-info[data-footer-stage="3"] #footer-credits + [aria-hidden="true"] {
+    display: none;
+}
+
+/* Interval 4: Hide credits & notes; always keep disclaimer (+ balanced wrap when narrow) */
+#footer-info[data-footer-stage="4"] #footer-credits,
+#footer-info[data-footer-stage="4"] #footer-credits + [aria-hidden="true"],
+#footer-info[data-footer-stage="4"] #footer-notes,
+#footer-info[data-footer-stage="4"] #footer-notes + [aria-hidden="true"] {
+    display: none;
+}
+
+#footer-info[data-footer-stage="4"] #footer-disclaimer {
+    flex: 0 1 auto;
+    white-space: normal;
+    text-wrap: balance;
+    max-width: 100%;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+/* Pure-CSS staged fallbacks before JS exact measurement sets data-footer-stage */
+@container footer (max-width: 37rem) {
+    #footer-info:not([data-footer-stage]) #footer-notes,
+    #footer-info:not([data-footer-stage]) #footer-disclaimer {
+        flex: 0 1 auto;
+        white-space: normal;
+        text-wrap: balance;
+    }
+}
+
+@container footer (max-width: 26rem) {
+    #footer-info:not([data-footer-stage]) #footer-credits,
+    #footer-info:not([data-footer-stage]) #footer-credits + [aria-hidden="true"] {
+        display: none;
+    }
+}
+
+@container footer (max-width: 20rem) {
+    #footer-info:not([data-footer-stage]) #footer-notes,
+    #footer-info:not([data-footer-stage]) #footer-notes + [aria-hidden="true"] {
+        display: none;
+    }
+}
+
+#footer-repo-link {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    text-decoration: none;
+    white-space: nowrap;
+}

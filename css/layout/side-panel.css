@@ -1,0 +1,411 @@
+/* ==========================================================================
+   Side Panel Internals: Tabs, Sub-Tabs, Courses Tree, Preferences, Schedules
+   ========================================================================== */
+
+#side-panel {
+    overflow: hidden;
+}
+
+/* ---------- Primary & Secondary Tablists ---------- */
+#side-panel-nav,
+#preferences-subnav,
+#schedules-subnav {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    container-type: inline-size;
+    container-name: tablist;
+}
+
+#side-panel-nav [role="tablist"],
+#preferences-subnav [role="tablist"],
+#schedules-subnav [role="tablist"] {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    border-bottom: 1px solid GrayText;
+}
+
+#side-panel-nav [role="tab"],
+#preferences-subnav [role="tab"],
+#schedules-subnav [role="tab"] {
+    flex: 1 1 0;
+    min-width: max-content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.5rem;
+    white-space: nowrap;
+}
+
+@container tablist (max-width: 21.75rem) {
+    #side-panel-nav [role="tablist"]:not([data-compact="false"]) .tab-text,
+    #preferences-subnav [role="tablist"]:not([data-compact="false"]) .tab-text {
+        display: none;
+    }
+}
+
+@container tablist (max-width: 12.5rem) {
+    #schedules-subnav [role="tablist"]:not([data-compact="false"]) .tab-text {
+        display: none;
+    }
+}
+
+[role="tablist"][data-compact="true"] .tab-text {
+    display: none;
+}
+
+[role="tablist"][data-compact="false"] .tab-text {
+    display: inline;
+}
+
+/* ---------- Primary Tabpanels ---------- */
+#panel-courses,
+#panel-preferences,
+#panel-schedules {
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Tab 1: Courses
+   ========================================================================== */
+
+#courses-search-bar {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.375rem;
+    border-bottom: 1px solid GrayText;
+}
+
+#courses-search-bar > label {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+}
+
+#fuzzy-search-input {
+    flex: 1 1 0;
+    width: 0;
+    min-width: var(--min-trunc-text-width);
+}
+
+#courses-filter-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+}
+
+#courses-filter-popover[open] {
+    position: absolute;
+    top: 100%;
+    inset-inline-end: 0.5rem;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 12rem;
+    max-width: calc(100% - 1rem);
+}
+
+#courses-filter-popover fieldset {
+    margin: 0;
+    padding: 0.375rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+#courses-filter-popover select {
+    width: 100%;
+    min-width: 0;
+}
+
+#no-available-crns-warning {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid GrayText;
+}
+
+#courses-tree {
+    flex: 1 1 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0.5rem;
+    list-style: none;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.course-node,
+.crn-node {
+    min-width: 0;
+}
+
+.course-summary,
+.crn-summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    cursor: pointer;
+    min-width: 0;
+    padding: 0.25rem 0;
+}
+
+.course-summary::-webkit-details-marker,
+.crn-summary::-webkit-details-marker {
+    display: none;
+}
+
+.course-summary input[type="checkbox"],
+.crn-summary input[type="checkbox"] {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.expand-icon {
+    flex: 0 0 auto;
+    display: inline-block;
+    transform: rotate(-90deg);
+}
+
+details[open] > summary > .expand-icon {
+    transform: rotate(0deg);
+}
+
+[dir="rtl"] .expand-icon {
+    transform: rotate(90deg);
+}
+
+[dir="rtl"] details[open] > summary > .expand-icon {
+    transform: rotate(0deg);
+}
+
+.course-heading {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.course-name {
+    flex: 0 1 auto;
+    min-width: var(--min-trunc-text-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.course-code {
+    flex: 0 1 auto;
+    min-width: var(--min-trunc-text-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.crns-list {
+    margin: 0;
+    padding: 0;
+    padding-inline-start: 0.75rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.crn-number {
+    flex: 0 1 auto;
+    min-width: var(--min-trunc-text-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.crn-availability-badge {
+    flex: 0 1 auto;
+    margin-inline-start: auto;
+    min-width: var(--min-trunc-text-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0.125rem 0.375rem;
+}
+
+.crn-meta {
+    margin: 0;
+    padding: 0.125rem 0 0.25rem 0;
+    padding-inline-start: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.crn-meta-row {
+    min-width: 0;
+}
+
+.crn-meta-row dd {
+    margin: 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.crn-instructor,
+.crn-section,
+.crn-type,
+.crn-meta-row dd.crn-time {
+    display: block;
+    min-width: var(--min-trunc-text-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   Tab 2: Preferences (Courses, Instructors, Times)
+   ========================================================================== */
+
+#subpanel-pref-courses,
+#subpanel-pref-instructors,
+#subpanel-pref-times {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+    padding: 0.5rem;
+}
+
+#pref-courses-table,
+#pref-instructors-table,
+#pref-times-table,
+#schedules-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#pref-courses-table th,
+#pref-courses-table td,
+#pref-instructors-table th,
+#pref-instructors-table td,
+#pref-times-table th,
+#pref-times-table td,
+#schedules-table th,
+#schedules-table td {
+    padding: 0.375rem 0.375rem;
+    text-align: start;
+    vertical-align: middle;
+    border-bottom: 1px solid GrayText;
+}
+
+.pref-course-name,
+.pref-instructor-name {
+    max-width: 10rem;
+    min-width: var(--min-trunc-text-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#pref-courses-table input[type="number"],
+#pref-instructors-table input[type="number"],
+#pref-times-table input[type="number"] {
+    width: 4rem;
+    min-width: 3rem;
+}
+
+.time-interval-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+}
+
+.time-slot-btn {
+    padding: 0.25rem 0.375rem;
+    white-space: nowrap;
+}
+
+.remove-time-row-btn,
+#add-time-row-btn {
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+}
+
+#time-picker-popover[open] {
+    position: absolute;
+    top: 3rem;
+    inset-inline-start: 0.5rem;
+    z-index: 30;
+}
+
+.time-picker-selectors {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* ==========================================================================
+   Tab 3: Schedules
+   ========================================================================== */
+
+#schedules-list-region {
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+    padding: 0.5rem;
+}
+
+.schedule-select-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.schedule-select-label > span {
+    min-width: var(--min-trunc-text-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bookmark-schedule-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+}
+
+.schedule-color-picker {
+    width: 2.25rem;
+    height: 1.5rem;
+    padding: 0;
+}

@@ -1,0 +1,219 @@
+/* ==========================================================================
+   Main Workspace Split, Horizontal/Vertical Switching & Resize Handle
+   ========================================================================== */
+
+#app-main {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    overflow: hidden;
+}
+
+/* ---------- Side Panel Handle Base ---------- */
+#side-panel-handle {
+    position: absolute;
+    z-index: 5;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: Canvas;
+    color: CanvasText;
+    touch-action: none;
+    user-select: none;
+}
+
+#side-panel-handle .handle-line-svg {
+    display: block;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   Horizontal Mode (width >= height)
+   ========================================================================== */
+
+#app-main[data-layout="horizontal"] {
+    flex-direction: row;
+}
+
+#app-main[data-layout="horizontal"] > #side-panel {
+    position: relative;
+    flex: 0 0 auto;
+    width: var(--side-panel-width);
+    min-width: var(--side-panel-min-width);
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding-inline-end: var(--handle-thickness);
+    border-inline-end: 1px solid GrayText;
+}
+
+#app-main[data-layout="horizontal"] > #side-panel[data-collapsed="true"] {
+    width: var(--handle-thickness);
+    min-width: var(--handle-thickness);
+    padding-inline-end: 0;
+    border-inline-end: 0;
+    overflow: hidden;
+}
+
+#app-main[data-layout="horizontal"] > #side-panel[data-collapsed="true"] > :not(#side-panel-handle) {
+    display: none;
+}
+
+#app-main[data-layout="horizontal"] #side-panel-handle {
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: var(--handle-thickness);
+    height: 100%;
+    cursor: ew-resize;
+    border-inline-start: 1px solid GrayText;
+}
+
+#app-main[data-layout="horizontal"] #side-panel-handle .handle-line-svg {
+    width: 0.625rem;
+    height: 3rem;
+}
+
+#app-main[data-layout="horizontal"] > #preview-panel {
+    flex: 1 1 0;
+    min-width: var(--preview-min-width);
+    height: 100%;
+    min-height: 0;
+}
+
+/* ==========================================================================
+   Vertical Mode (width < height)
+   ========================================================================== */
+
+#app-main[data-layout="vertical"] {
+    flex-direction: column-reverse;
+}
+
+#app-main[data-layout="vertical"] > #preview-panel {
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--preview-min-height);
+}
+
+#app-main[data-layout="vertical"] > #side-panel {
+    position: relative;
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--handle-thickness);
+    height: var(--side-panel-height);
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--handle-thickness);
+    border-top: 1px solid GrayText;
+    background-color: Canvas;
+}
+
+#app-main[data-layout="vertical"] #side-panel-handle {
+    inset-inline: 0;
+    top: 0;
+    width: 100%;
+    height: var(--handle-thickness);
+    cursor: ns-resize;
+    border-bottom: 1px solid GrayText;
+}
+
+#app-main[data-layout="vertical"] #side-panel-handle .handle-line-svg {
+    width: 0.625rem;
+    height: 3.5rem;
+    transform: rotate(90deg);
+}
+
+/* Snap 1: Minimized (handle bar only) */
+#app-main[data-layout="vertical"] > #side-panel[data-snap="minimized"] {
+    height: var(--handle-thickness);
+    overflow: hidden;
+}
+
+#app-main[data-layout="vertical"] > #side-panel[data-snap="minimized"] > :not(#side-panel-handle) {
+    display: none;
+}
+
+/* Snap 2: Normal (shared vertical split) */
+#app-main[data-layout="vertical"] > #side-panel[data-snap="normal"] {
+    height: var(--side-panel-height);
+}
+
+/* Snap 3: Expanded (bottom-sheet overlay over preview panel) */
+#app-main[data-layout="vertical"]:has(> #side-panel[data-snap="expanded"]),
+#app-main[data-layout="vertical"]:has(> #side-panel[data-overlay="true"]) {
+    justify-content: flex-end;
+}
+
+#app-main[data-layout="vertical"]:has(> #side-panel[data-snap="expanded"]) > #preview-panel,
+#app-main[data-layout="vertical"]:has(> #side-panel[data-overlay="true"]) > #preview-panel {
+    flex: 0 0 calc(100% - var(--side-panel-normal-height));
+}
+
+#app-main[data-layout="vertical"] > #side-panel[data-snap="expanded"],
+#app-main[data-layout="vertical"] > #side-panel[data-overlay="true"] {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: var(--side-panel-expanded-height);
+    z-index: 30;
+    background-color: Canvas;
+}
+
+#app-main[data-layout="vertical"] > #side-panel[data-snap="expanded"] #side-panel-handle,
+#app-main[data-layout="vertical"] > #side-panel[data-overlay="true"] #side-panel-handle {
+    z-index: 10;
+}
+
+#app-main[data-layout="vertical"] > #side-panel[data-overlay="true"][data-dragging="true"] {
+    height: var(--side-panel-height);
+}
+
+/* Pure-CSS aspect-ratio fallback before JS initializes data-layout-managed */
+@media (max-aspect-ratio: 9999/10000) {
+    #app-main:not([data-layout-managed="true"]) {
+        flex-direction: column-reverse;
+    }
+
+    #app-main:not([data-layout-managed="true"]) > #preview-panel {
+        flex: 1 1 0;
+        width: 100%;
+        min-width: 0;
+        min-height: var(--preview-min-height);
+        height: auto;
+    }
+
+    #app-main:not([data-layout-managed="true"]) > #side-panel {
+        flex: 0 0 auto;
+        width: 100%;
+        min-width: 0;
+        height: var(--side-panel-height);
+        padding-inline-end: 0;
+        padding-top: var(--handle-thickness);
+        border-inline-end: 0;
+        border-top: 1px solid GrayText;
+    }
+
+    #app-main:not([data-layout-managed="true"]) #side-panel-handle {
+        inset-block: auto;
+        inset-inline: 0;
+        top: 0;
+        width: 100%;
+        height: var(--handle-thickness);
+        cursor: ns-resize;
+        border-inline-start: 0;
+        border-bottom: 1px solid GrayText;
+    }
+
+    #app-main:not([data-layout-managed="true"]) #side-panel-handle .handle-line-svg {
+        width: 0.625rem;
+        height: 3.5rem;
+        transform: rotate(90deg);
+    }
+}

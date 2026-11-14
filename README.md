@@ -1,6 +1,6 @@
 # Cloudy: Schedule Builder
-Version: 0.2.1
-العربية: ./README-AR.md
+Version: 0.2.2
+[العربية](./README-AR.md)
 
 This website is a tool for generating multiple university schedules with the ability to filter and prioritize schedules over one another by scoring them. It can also display multiple schedules side by side for direct comparison, and lets you view all CRNs and copy them easily for later registration.
 
@@ -14,13 +14,21 @@ The page consists of four sections:
 ### Header Buttons
 
 ### Side Panel
+Under work.
 #### Courses Tab
+Under work.
 #### Preferences Tab
+Under work.
 #### Schedules Tab
+Under work.
 ### Timetable Previewer
+Under work.
 #### Timetable Grid
+Under work.
 #### Exporting the Schedule
+Under work.
 ## Project Structure
+Under work.
 
 ## Future Features Plan:
 - [x] 0.1.0: Create page elements
@@ -37,3 +45,4 @@ The page consists of four sections:
 X.0.0: For major overhauls and large updates that introduce fundamental changes to how the page works
 0.X.0: For moderate updates, such as adding or removing features
 0.0.X: Bug fixes and minor improvements
+0.0.0-beta.X: Experimental release for testing new features
